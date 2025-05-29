@@ -1,7 +1,5 @@
 # ⚽ Sports Match Viewer
 
-# ⚽ Sports Match Viewer
-
 A modern full-stack web application to view upcoming **soccer matches** filtered by **league** and **date**, powered by the [API-Football](https://www.api-football.com/) API.
 
 📅 7-day scrollable date carousel  
