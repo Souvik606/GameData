@@ -5,21 +5,22 @@ export default function LeagueFilter({ leagues, selected, onChange }) {
   const [open, setOpen] = useState(false);
   const ref = useRef();
 
-  // Close dropdown on outside click
+  // close on outside click
   useEffect(() => {
-    const handleClick = (e) => {
+    const handler = e => {
       if (ref.current && !ref.current.contains(e.target)) {
         setOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const selectedObj = leagues.find(l => String(l.league.id) === String(selected));
+  // now leagues is [ {id,name,type,logo}, … ]
+  const selectedObj = leagues.find(l => String(l.id) === String(selected));
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 p-6 mb-8" ref={ref}>
+    <div ref={ref} className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border p-6 mb-8">
       <div className="flex items-center space-x-3 mb-4">
         <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-2 rounded-lg">
           <Filter className="h-5 w-5 text-white" />
@@ -30,56 +31,43 @@ export default function LeagueFilter({ leagues, selected, onChange }) {
       </div>
 
       <div className="relative">
-        {/* Trigger */}
         <button
           onClick={() => setOpen(o => !o)}
-          className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600 rounded-xl text-gray-800 dark:text-white font-medium focus:outline-none"
+          className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-700 border-2 rounded-xl"
         >
           <div className="flex items-center space-x-3">
             {selectedObj ? (
-              <img
-                src={selectedObj.league.logo}
-                alt={selectedObj.league.name}
-                className="w-6 h-6 object-contain rounded-full"
-              />
+              <img src={selectedObj.logo} alt="" className="w-6 h-6 rounded-full" />
             ) : (
               <div className="w-6 h-6 bg-gray-200 dark:bg-slate-600 rounded-full" />
             )}
-            <span>
+            <span className="text-gray-800 dark:text-white font-medium">
               {selectedObj
-                ? `${selectedObj.league.name}${selectedObj.league.type ? ` (${selectedObj.league.type})` : ''}`
+                ? `${selectedObj.name}${selectedObj.type ? ` (${selectedObj.type})` : ''}`
                 : 'All Leagues'}
             </span>
           </div>
-          <ChevronDown className={`h-5 w-5 transform transition-transform ${open ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`h-5 w-5 transform ${open ? 'rotate-180' : ''}`} />
         </button>
 
-        {/* Options */}
         {open && (
-          <ul className="absolute z-10 mt-2 w-full max-h-60 overflow-auto bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-lg">
-            {/* “All Leagues” option */}
+          <ul className="absolute z-10 mt-2 w-full max-h-60 overflow-auto bg-white dark:bg-slate-800 border rounded-xl shadow-lg">
             <li
               onClick={() => { onChange(''); setOpen(false); }}
-              className="flex items-center space-x-3 px-4 py-2 hover:bg-blue-100 dark:hover:bg-slate-700 cursor-pointer"
+              className="flex items-center px-4 py-2 hover:bg-blue-100 dark:hover:bg-slate-700 cursor-pointer"
             >
               <div className="w-6 h-6 bg-gray-200 dark:bg-slate-600 rounded-full" />
-              <span className="text-gray-800 dark:text-white">All Leagues</span>
+              <span className="ml-3 text-gray-800 dark:text-white">All Leagues</span>
             </li>
-
-            {/* League options */}
             {leagues.map(l => (
               <li
-                key={l.league.id}
-                onClick={() => { onChange(l.league.id); setOpen(false); }}
-                className="flex items-center space-x-3 px-4 py-2 hover:bg-blue-100 dark:hover:bg-slate-700 cursor-pointer"
+                key={l.id}
+                onClick={() => { onChange(l.id); setOpen(false); }}
+                className="flex items-center px-4 py-2 hover:bg-blue-100 dark:hover:bg-slate-700 cursor-pointer"
               >
-                <img
-                  src={l.league.logo}
-                  alt={l.league.name}
-                  className="w-6 h-6 object-contain rounded-full"
-                />
-                <span className="text-gray-800 dark:text-white">
-                  {l.league.name}{l.league.type ? ` (${l.league.type})` : ''}
+                <img src={l.logo} alt="" className="w-6 h-6 rounded-full" />
+                <span className="ml-3 text-gray-800 dark:text-white">
+                  {l.name}{l.type && ` (${l.type})`}
                 </span>
               </li>
             ))}
